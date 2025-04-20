@@ -9,3 +9,4 @@ class AskInput(BaseModel):
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
+    token_usage: dict

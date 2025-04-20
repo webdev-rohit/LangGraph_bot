@@ -34,10 +34,20 @@ def chatbot(state: State):
     # print('\ncurrent state >', state)
     print('\nstate messages length >', len(state['messages']))
 
-    # llm_invoke_result = llm_with_tools.invoke(state["messages"][-4:])
-    llm_invoke_result = llm_with_tools.invoke(state["messages"])
+    llm_invoke_result = llm_with_tools.invoke(state["messages"][-9:]) # trying to maintain last 3 conversation's history
+    # llm_invoke_result = llm_with_tools.invoke(state["messages"])
 
-    return {"messages": [llm_invoke_result]}
+    token_info = llm_invoke_result.response_metadata.get("token_usage", {})
+    input_tokens = token_info.get("prompt_tokens", 0)
+    output_tokens = token_info.get("completion_tokens", 0)
+    total_tokens = token_info.get("total_tokens", 0)
+
+    print(f"\nToken usage - Input: {input_tokens}, Output: {output_tokens}, Total: {total_tokens}")
+
+    return {
+                "messages": [llm_invoke_result], 
+                "token_usage":{"input_tokens":input_tokens, "output_tokens":output_tokens, "total_tokens":total_tokens}
+           }
 
 graph_builder.add_node("chatbot", chatbot)
 tools_node = ToolNode(tools=tools)
@@ -62,7 +72,7 @@ def answer_query(user_query, session_id):
         )
         # print('\nevents >', events)
         print("\nAssistant:", events["messages"][-1].content)
-        return events["messages"][-1].content
+        return events["messages"][-1].content, events["token_usage"]
     except GraphRecursionError as e:
         print("\nCouldn't fetch result at the moment due to recursion error")
         return e

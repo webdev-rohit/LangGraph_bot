@@ -1,5 +1,8 @@
+# importing internal modules
 from utils import llm
 from prompts import classify_incidents_prompt
+
+# importing other important libraries
 import requests
 import os
 from dotenv import load_dotenv
@@ -11,14 +14,16 @@ username = os.getenv('SNOW_USERNAME')
 password = os.getenv('SNOW_PASSWORD')
 incident_table_url = os.getenv('SNOW_INCIDENT_TABLE_URL')
 
+# importing tool library
 from langchain_community.tools import tool
 
 headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-# Defining incident status checking tool
+# Note - LLM understands the purpose of the tool from the defined docstring in the tool function. So, it is compulsory to define a docstring in the tool function as shown below
+# Defining incident status checking tool.
 @tool
 def check_snow_incident_status(inc_number):
-    """This tool checks the status of the ticket provided an incident ticket number. If the ticket number is not provided then the llm needs to ask about the ticket number. Example of an incident ticket number - INC0010018. So, the ticket number will always start with 'inc' or 'INC' followed by 7 numerical digits. If that is not the case then the llm must ask for a valid ticket number."""
+    """This tool checks the status of the ticket provided an incident ticket number. If the ticket number is not provided then the llm needs to ask about the ticket number. Example of an incident ticket number - INC0010018. So, the ticket number will always start with 'inc' or 'INC' followed by 7 numerical digits. If that is not the case then the llm must ask for a valid ticket number. This tool MUST BE USED ONLY WHEN USER REQUESTS TO KNOW THE STATUS OF A TICKET and not for any general queries."""
 
     incident_states = {1:"New",2:"In Progress",3:"On Hold",6:"Resolved",7:"Closed",8:"Canceled"}
     status_url = incident_table_url+'?number='+inc_number
@@ -35,7 +40,7 @@ def check_snow_incident_status(inc_number):
 # Defining incident creation tool
 @tool
 def create_snow_incident(user_issue, caller):
-    """This tool creates an incident ticket provided fields like the user issue and caller name. If the user hasn't mentioned the issue itself and has just asked for ticket creation the llm is supposed to ask the user for the issue."""
+    """This tool creates an incident ticket provided fields like the user issue and caller name. If the user hasn't mentioned the issue itself and has just asked for ticket creation the llm is supposed to ask the user for the issue. This tool MUST BE USED ONLY WHEN USER WANTS TO CREATE A TICKET and not for any general queries."""
 
     print('\ncaller name >', caller)
     # decide if caller name exists in the callers list in SNOW -

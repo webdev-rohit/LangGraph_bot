@@ -18,8 +18,8 @@ def home():
 @app.post('/ask')
 def ask(request: AskInput):
     try:
-        result = answer_query(request.user_query, request.session_id)
-        return {'success':1, 'message': result}
+        result, token_usage = answer_query(request.user_query, request.session_id)
+        return {'success':1, 'message': result, 'token_usage': token_usage}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
