@@ -10,8 +10,8 @@ groq_api_key = os.getenv('GROQ_API_KEY')
 
 # loading groq llm model
 from langchain_groq.chat_models import ChatGroq
-# llm = ChatGroq(api_key=groq_api_key, model="llama-3.3-70b-versatile")
-llm = ChatGroq(api_key=groq_api_key, model="llama-3.1-8b-instant")
+llm = ChatGroq(api_key=groq_api_key, model="llama-3.3-70b-versatile")
+# llm = ChatGroq(api_key=groq_api_key, model="llama-3.1-8b-instant")
 
 # importing tools
 from used_tools import tools
@@ -21,9 +21,11 @@ llm_with_tools = llm.bind_tools(tools)
 
 # langgraph bot -
 from models import State
+from prompts import sys_prompt
 from langgraph.graph import StateGraph, START, END # Start and end nodes
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.errors import GraphRecursionError
+from langchain_core.messages import SystemMessage
 # from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 
 graph_builder = StateGraph(State)
@@ -53,13 +55,14 @@ graph = graph_builder.compile(checkpointer=memory)
 def answer_query(user_query, session_id):
     config = {"configurable": {"thread_id": session_id}, "recursion_limit": 10} # thread_id is like a session ID. Changing this id will make the bot forget the converstation history of the previous session. Setting a Recursion limit prevents langgraph from keeping on calling tools or the llm for finding the answer. By default this is 25, I've set it here to 10
     try:
+        system_prompt = SystemMessage(content=sys_prompt)
         events = graph.invoke(
-            {"messages": [{"role": "user", "content": user_query}]},
+            {"messages": [system_prompt, {"role": "user", "content": user_query}]}, # adding system prompt here
             config,
         )
         # print('\nevents >', events)
         print("\nAssistant:", events["messages"][-1].content)
         return events["messages"][-1].content
     except GraphRecursionError as e:
-        print("Couldn't fetch result at the moment due to recursion error")
+        print("\nCouldn't fetch result at the moment due to recursion error")
         return e
