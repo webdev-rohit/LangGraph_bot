@@ -1,0 +1,21 @@
+query,solution
+None of us can access our email accounts since this morning. It just keeps showing a connection error.,Try restarting the email server and checking DNS settings.
+The main company website is completely down - clients are calling in saying they can't log in or view anything.,Check the web server status and CDN settings.
+I just got a security alert saying my account was accessed from another country. I didn't log in from there.,Initiate a security review and reset the user credentials.
+Customers are reporting that they can't complete payments on the portal - the checkout page throws an error every time.,Check the payment gateway configuration and logs for API errors.
+Our entire team is locked out of the VPN - we're all working remotely and can't do anything until it is fixed.,Restart the VPN server and verify user group access permissions.
+The printer in the finance office isn't responding. We need it to print invoices today.,"Check printer connection, reboot the printer, and verify print queue."
+"I can't access the shared drive for our project folder - it says I don't have permission, but I was using it just yesterday.",Recheck permission mappings and group policies.
+Microsoft Teams keeps crashing when I try to start a video call. It's been happening a lot today.,Clear Teams cache and update the app.
+"My email signature is showing up all messed up - the formatting looks weird, but I can still send emails fine.",Update your signature formatting in the settings or reset it.
+Can you help rename our team's email group from -Sales2024 to -SalesOps? It's causing some confusion.,Go to the email admin console and update the group name settings.
+My laptop is running very slow today. It's taking forever to open apps.,Try restarting the device and closing background apps. Run a system health scan.
+I'm getting repeated login prompts when trying to open Outlook.,"Remove and re-add the email account, or check cached credentials."
+I accidentally deleted a folder from our shared drive.,Restore the folder from the backup or cloud recycle bin.
+Our time tracking software is not syncing correctly with the payroll system.,Check API integration logs and re-authenticate the sync connection.
+"I can't hear anything during Zoom calls, but my mic works.",Check speaker output settings and try switching to another audio device.
+The lights in the conference room aren't turning on.,Contact facilities to check power or switch issues.
+The antivirus software keeps showing a warning on a specific file I downloaded.,Isolate the file and scan it with another antivirus tool.
+The website contact form is not sending confirmation emails to users.,Check the SMTP server configuration and spam filtering rules.
+I forgot my password and can't access the HR portal.,Reset the password using the recovery option or contact IT.
+The Wi-Fi on the 3rd floor is extremely weak today.,Reboot the access point and check for interference.
