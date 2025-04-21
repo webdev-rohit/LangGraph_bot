@@ -39,39 +39,32 @@ def check_snow_incident_status(inc_number):
 
 # Defining incident creation tool
 @tool
-def create_snow_incident(user_issue, caller):
-    """This tool creates an incident ticket provided fields like the user issue and caller name. If the user hasn't mentioned the issue itself and has just asked for ticket creation the llm is supposed to ask the user for the issue. This tool MUST BE USED ONLY WHEN USER WANTS TO CREATE A TICKET and not for any general queries."""
+def create_snow_incident(user_issue):
+    """This tool creates an incident ticket provided the user issue. If the user hasn't mentioned the issue itself and has just asked for ticket creation the llm is supposed to ask the user for the issue. This tool MUST BE USED ONLY WHEN USER WANTS TO CREATE A TICKET and not for any general queries."""
 
-    print('\ncaller name >', caller)
-    # decide if caller name exists in the callers list in SNOW -
-    callersList = fetch_users_list()
-    print('\nexisting callersList >', callersList)
-    if caller in callersList:
-        # determine urgency by calling LLM
-        result = llm.invoke(classify_incidents_prompt+" "+user_issue)
-        print('\nurgency decided by LLM >', result.content)
+    # determine urgency by calling LLM
+    result = llm.invoke(classify_incidents_prompt+" "+user_issue)
+    print('\nurgency decided by LLM >', result.content)
 
-        urgency_dict = {'High':1, 'Medium':2, 'Low':3}
-        payload = {
-            "short_description": user_issue,
-            "caller_id": caller,
-            "state": 1,  # New
-            "urgency": urgency_dict[result.content]
-        }
+    urgency_dict = {'High':1, 'Medium':2, 'Low':3}
+    payload = {
+        "short_description": user_issue,
+        "caller_id": "Abel Tuter",
+        "state": 1,  # New
+        "urgency": urgency_dict[result.content]
+    }
 
-        response = requests.post(url=incident_table_url, auth=(username, password), headers=headers ,json=payload)
-        if response.status_code == 200 or response.status_code == 201:
-            inc_number = response.json()['result']['number']
-            print(f'\nIncident {inc_number} created successfully')
-            # print(response.json())
-            return f'Incident {inc_number} created successfully having urgency - {urgency_dict[result.content]}'
-        else:
-            print('\nSome error occurred during incident ticket creation >', response.text)
-            return 'Some error occured during incident ticket creation'
+    response = requests.post(url=incident_table_url, auth=(username, password), headers=headers ,json=payload)
+    if response.status_code == 200 or response.status_code == 201:
+        inc_number = response.json()['result']['number']
+        print(f'\nIncident {inc_number} created successfully')
+        # print(response.json())
+        return f'Incident {inc_number} created successfully having urgency - {urgency_dict[result.content]}'
     else:
-        print('\nYou do not seem to be in our caller list for creating tickets, so we cannot create the ticket for you. Please specify a valid user name')
-        return 'You do not seem to be in our caller list for creating tickets, so we cannot create the ticket for you. Please specify a valid user name'
+        print('\nSome error occurred during incident ticket creation >', response.text)
+        return 'Some error occured during incident ticket creation'
 
+# This function to be used when we need to check whether caller exists from the list of callers in incident table.
 def fetch_users_list():
     params = {
         'sysparm_fields': 'caller_id.name',
