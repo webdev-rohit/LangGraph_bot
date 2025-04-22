@@ -3,6 +3,7 @@ from utils import llm
 from prompts import classify_incidents_prompt
 
 # importing other important libraries
+import string
 import requests
 import os
 from dotenv import load_dotenv
@@ -45,13 +46,15 @@ def create_snow_incident(user_issue):
     # determine urgency by calling LLM
     result = llm.invoke(classify_incidents_prompt+" "+user_issue)
     print('\nurgency decided by LLM >', result.content)
+    clean_urgency_value = result.content.strip(string.punctuation)
+    print('\nclean_urgency_value >', clean_urgency_value)
 
     urgency_dict = {'High':1, 'Medium':2, 'Low':3}
     payload = {
         "short_description": user_issue,
         "caller_id": "Abel Tuter",
         "state": 1,  # New
-        "urgency": urgency_dict[result.content]
+        "urgency": urgency_dict[clean_urgency_value]
     }
 
     response = requests.post(url=incident_table_url, auth=(username, password), headers=headers ,json=payload)
@@ -59,7 +62,7 @@ def create_snow_incident(user_issue):
         inc_number = response.json()['result']['number']
         print(f'\nIncident {inc_number} created successfully')
         # print(response.json())
-        return f'Incident {inc_number} created successfully having urgency - {result.content}'
+        return f'Incident {inc_number} created successfully having urgency - {clean_urgency_value}'
     else:
         print('\nSome error occurred during incident ticket creation >', response.text)
         return 'Some error occured during incident ticket creation'
