@@ -59,7 +59,7 @@ def create_snow_incident(user_issue):
         inc_number = response.json()['result']['number']
         print(f'\nIncident {inc_number} created successfully')
         # print(response.json())
-        return f'Incident {inc_number} created successfully having urgency - {urgency_dict[result.content]}'
+        return f'Incident {inc_number} created successfully having urgency - {result.content}'
     else:
         print('\nSome error occurred during incident ticket creation >', response.text)
         return 'Some error occured during incident ticket creation'

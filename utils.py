@@ -75,4 +75,4 @@ def answer_query(user_query, session_id):
         return events["messages"][-1].content, events["token_usage"]
     except GraphRecursionError as e:
         print("\nCouldn't fetch result at the moment due to recursion error")
-        return e
+        return "Couldn't fetch result at the moment due to recursion error", events["token_usage"]
